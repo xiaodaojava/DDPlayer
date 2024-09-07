@@ -1,12 +1,11 @@
 package com.example.ttplayer;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.Event;
 import javafx.geometry.Point2D;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -31,7 +30,31 @@ public class VideoPlayerController {
 
 
     public ButtonBar buttonBar;
+
+    /**
+     * 时间标签
+     */
     public Label currentTime;
+
+    /**
+     * 静音
+     */
+    public Button muteBtn;
+
+    /**
+     * 音量加
+     */
+    public Button volumeAddBtn;
+
+    /**
+     * 音量减
+     */
+    public Button volumeSubBtn;
+
+    /**
+     * 播放/暂停
+     */
+    public Button playBtn;
 
     private File mediaFile;
 
@@ -60,7 +83,7 @@ public class VideoPlayerController {
             double height = newValue.doubleValue() - top - bottom;
             AnchorPane.setTopAnchor(vbox, top);
             AnchorPane.setBottomAnchor(vbox, bottom);
-            vbox.setPrefHeight(height-40);
+            vbox.setPrefHeight(height - 40);
         });
 
         //如果 VBox 的 fillWidth 属性设置为 true，则 VBox 的子节点将尝试扩展其宽度以填充 BorderPane 的宽度。
@@ -73,8 +96,6 @@ public class VideoPlayerController {
 
         // 设置ProgressBar的进度
         mediaPlayer.setOnReady(() -> {
-            
-
 
             mediaPlayer.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
                 double totalSeconds = mediaPlayer.getTotalDuration().toSeconds();
@@ -90,21 +111,9 @@ public class VideoPlayerController {
                         + ":" + df.format((totalSeconds % 3600) / 60)
                         + ":" + df.format(totalSeconds % 60);
 
-                currentTime.setText(currentTimeStr+"/"+totalTimeStr);
+                currentTime.setText(currentTimeStr + "/" + totalTimeStr);
             });
         });
-
-        progressBar.setOnMouseClicked(event -> {
-            // 获取点击位置的屏幕坐标
-            Point2D point = new Point2D(event.getSceneX(), event.getSceneY());
-            // 将屏幕坐标转换为进度条上的位置（假设进度条宽度为300）
-            double progress = point.getX() / progressBar.getWidth();
-            // 计算播放时间
-            Duration newTime = mediaPlayer.getTotalDuration().multiply(progress);
-            // 设置 MediaPlayer 的播放时间
-            mediaPlayer.seek(newTime);
-        });
-
 
 
         mediaView.setMediaPlayer(mediaPlayer);
@@ -112,6 +121,92 @@ public class VideoPlayerController {
         mediaPlayer.setMute(true);
 
 
+    }
 
+    public void playBtnClick(MouseEvent mouseEvent) {
+        // 如果mediaPlay正在播放，则暂停。 如果是暂停则播放
+        if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+            mediaPlayer.pause();
+            tooltipNotice(mouseEvent,"暂停");
+        } else {
+            mediaPlayer.play();
+            tooltipNotice(mouseEvent,"播放");
+        }
+    }
+
+    public void volumeSubBtnClick(MouseEvent mouseEvent) {
+        // 判断音量有没有到最低，如果没有的话，则减0.1
+        if (mediaPlayer.getVolume() <= 0) {
+            tooltipNotice(mouseEvent,"当前音量已最低");
+            return;
+        }
+        mediaPlayer.setVolume(mediaPlayer.getVolume() - 0.1);
+        tooltipNotice(mouseEvent,"当前音量:"+mediaPlayer.getVolume()*10);
+
+
+    }
+
+    public void volumeAddBtnClick(MouseEvent mouseEvent) {
+        if (mediaPlayer.getVolume() >= 1) {
+            return;
+        }
+        // 如果是静音，先解除静音
+        if (mediaPlayer.isMute()) {
+            mediaPlayer.setMute(false);
+            // 然后设置为最小音量
+            mediaPlayer.setVolume(0.1);
+        }
+        // 调大音量
+        mediaPlayer.setVolume(mediaPlayer.getVolume() + 0.1);
+        tooltipNotice(mouseEvent,"当前音量:"+mediaPlayer.getVolume()*10);
+
+    }
+
+    /**
+     * 解除/设置静音
+     *
+     * @param mouseEvent
+     */
+    public void muteBtnClick(MouseEvent mouseEvent) {
+        mediaPlayer.setMute(!mediaPlayer.isMute());
+        tooltipNotice(mouseEvent,"当前静音状态:"+mediaPlayer.isMute());
+
+    }
+
+    public void progressBarClick(MouseEvent mouseEvent) {
+        // 获取点击位置的屏幕坐标
+        Point2D point = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+        // 将屏幕坐标转换为进度条上的位置（假设进度条宽度为300）
+        double progress = point.getX() / progressBar.getWidth();
+        // 计算播放时间
+        Duration newTime = mediaPlayer.getTotalDuration().multiply(progress);
+        // 设置 MediaPlayer 的播放时间
+        mediaPlayer.seek(newTime);
+    }
+
+    /**
+     * 根据事件，显示相应的Tooltip， 2秒后隐藏
+     */
+    public void tooltipNotice (Event event, String text) {
+        Node sourceNode = (Node) event.getSource();
+        Point2D point2D = sourceNode.localToScene(0, 0);
+        double buttonSceneX = point2D.getX();
+        double buttonSceneY = point2D.getY();
+
+        // 获取场景在窗口中的位置
+        double scenePosInWindow = sourceNode.getScene().getWindow().getX() + buttonSceneX;
+        double scenePosInWindowY = sourceNode.getScene().getWindow().getY() + buttonSceneY;
+
+
+        Tooltip tooltip = new Tooltip(text);
+        Tooltip.install(sourceNode, tooltip);
+        // 设置Popup的位置
+        tooltip.setX(scenePosInWindow + 5); // 按钮右边5像素处
+        tooltip.setY(scenePosInWindowY - tooltip.getHeight());
+        tooltip.show(sourceNode.getScene().getWindow());
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(1), _ -> tooltip.hide())
+        );
+        timeline.play();
     }
 }

@@ -8,21 +8,23 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.media.MediaView?>
 
-<AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ttplayer.VideoPlayerController">
+<AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
+
+            fx:controller="com.example.ttplayer.VideoPlayerController">
    <children>
       <VBox layoutY="40.0" prefHeight="320.0" prefWidth="600.0" fx:id="vbox">
 
          <children>
             <MediaView fx:id="mediaView"/>
             <Label text="Label" fx:id="currentTime" />
-            <ProgressBar prefHeight="20.0"  fx:id="progressBar"  progress="0.0" />
+            <ProgressBar prefHeight="20.0"  fx:id="progressBar" onMouseClicked="#progressBarClick" progress="0.0" />
             <ButtonBar nodeOrientation="RIGHT_TO_LEFT" fx:id="buttonBar" prefHeight="40.0" >
               <buttons>
-                  <Button mnemonicParsing="false" text="截图" />
-                  <Button mnemonicParsing="false" text="静音/解除" />
-                  <Button mnemonicParsing="false" text="音量-" />
-                  <Button mnemonicParsing="false" text="音量+" />
-                <Button mnemonicParsing="false" text="播放/暂停" />
+                  <Button mnemonicParsing="false"  text="截图(等待迭代中)" />
+                  <Button mnemonicParsing="false" fx:id="muteBtn" onMouseClicked="#muteBtnClick" text="静音/解除" />
+                  <Button mnemonicParsing="false" fx:id="volumeSubBtn" onMouseClicked="#volumeSubBtnClick" text="音量-" />
+                  <Button mnemonicParsing="false" fx:id="volumeAddBtn" onMouseClicked="#volumeAddBtnClick" text="音量+" />
+                <Button mnemonicParsing="false" fx:id="playBtn" onMouseClicked="#playBtnClick"  text="播放/暂停" />
               </buttons>
             </ButtonBar>
          </children>
