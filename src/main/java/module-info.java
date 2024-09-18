@@ -3,6 +3,8 @@ module com.example.ttplayer {
     requires javafx.fxml;
     requires java.desktop;
     requires javafx.media;
+    requires javafx.graphics;
+    requires javafx.swing;
 
 
     opens com.example.ttplayer to javafx.fxml;
