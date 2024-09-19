@@ -1,6 +1,7 @@
 package com.example.ttplayer;
 
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
@@ -10,9 +11,12 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -20,14 +24,13 @@ import javafx.stage.*;
 
 
 import javax.imageio.ImageIO;
-import java.awt.AWTException;
-import java.awt.Dimension;
-import java.awt.Robot;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.MultiResolutionImage;
 import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class HelloController {
 
@@ -83,7 +86,6 @@ public class HelloController {
         canvas = new Pane();
         canvas.setStyle("-fx-background-color: rgba(0,0,0,0.5);"); // 灰色遮罩
 
-        Canvas screenCanvas = new Canvas(Screen.getPrimary().getVisualBounds().getWidth(), Screen.getPrimary().getVisualBounds().getHeight());
 
         captureButton.setOnAction(event -> {
 
@@ -98,15 +100,28 @@ public class HelloController {
             // 转换为JavaFX的Image
             Image fxImage = SwingFXUtils.toFXImage(screenImage, null);
             // 绘制到Canvas
+            Canvas screenCanvas = new Canvas(fxImage.getWidth(), fxImage.getHeight());
+
             GraphicsContext gc = screenCanvas.getGraphicsContext2D();
             gc.drawImage(fxImage, 0, 0);
-            VBox vbox = new VBox(screenCanvas);
-            StackPane stackPane = new StackPane(vbox);
 
-            Scene scene = new Scene(stackPane);
+            // 将Canvas放入ScrollPane中
+            ScrollPane scrollPane = new ScrollPane(screenCanvas);
+            scrollPane.setFitToWidth(true);
+            scrollPane.setFitToHeight(true);
+            VBox vbox = new VBox(scrollPane);
+            Scene scene = new Scene(vbox);
             Stage primaryStage = new Stage();
             // 让 stage是无边框的
-//            primaryStage.initStyle(StageStyle.UNDECORATED);
+            primaryStage.initStyle(StageStyle.UNDECORATED);
+            // 注册键盘事件监听器
+            scene.setOnKeyPressed(event1 -> {
+                // 检查是否按下了ESC键
+                if (event1.getCode() == KeyCode.ESCAPE) {
+                    primaryStage.close(); // 关闭当前的Stage
+                }
+            });
+
             primaryStage.setScene(scene);
             primaryStage.show();
 
@@ -176,13 +191,26 @@ public class HelloController {
 
     private BufferedImage captureScreen() {
         try {
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            // 获取所有屏幕设备
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            GraphicsDevice[] devices = ge.getScreenDevices();
+            GraphicsDevice currentDevice = devices[0];
             // 获取屏幕大小
-            java.awt.Rectangle rect = new java.awt.Rectangle(screenSize);
+            java.awt.Rectangle rect = new java.awt.Rectangle(currentDevice.getDefaultConfiguration().getBounds());
             // 创建Robot实例
             Robot robot = new Robot();
             // 捕获屏幕
-            return robot.createScreenCapture(rect);
+            java.awt.Image nativeResImage;
+            MultiResolutionImage mrImage = robot.createMultiResolutionScreenCapture(rect);
+            List<java.awt.Image> resolutionVariants = mrImage.getResolutionVariants();
+            if (resolutionVariants.size() > 1) {
+                nativeResImage = resolutionVariants.get(1);
+            } else {
+                nativeResImage = resolutionVariants.get(0);
+            }
+            return (BufferedImage) nativeResImage;
+//            return robot.createScreenCapture(rect);
         } catch (AWTException e) {
             e.printStackTrace();
             return null;
