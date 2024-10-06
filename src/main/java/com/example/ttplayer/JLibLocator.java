@@ -1,6 +1,8 @@
 package com.example.ttplayer;
 
 
+import com.example.ttplayer.tools.ToolsLogger;
+import com.github.kwhat.jnativehook.DefaultLibraryLocator;
 import com.github.kwhat.jnativehook.NativeLibraryLocator;
 import com.github.kwhat.jnativehook.NativeSystem;
 
@@ -9,6 +11,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class JLibLocator implements NativeLibraryLocator {
+
+
+    DefaultLibraryLocator defaultLocator = new DefaultLibraryLocator();
+
     /**
      * This method is used to regsiter the Locator.
      */
@@ -26,9 +32,13 @@ public class JLibLocator implements NativeLibraryLocator {
         var arch = NativeSystem.getArchitecture().toString().toLowerCase();
         var jhome = System.getProperty("java.home");
         var libName = System.mapLibraryName("JNativeHook");
-        var lib = jhome + File.separator + os + File.separator + arch + File.separator + libName;
+        // 和 build.gradle中 jink输出的目录是一致的
+        var lib = jhome + File.separator +"bin"+File.separator+"native-libs"+ File.separator + os + File.separator + arch + File.separator + libName;
         var libFile = new File(lib);
-
+        ToolsLogger.info("lib path: " + libFile.getAbsolutePath());
+        if(!libFile.exists()){
+            return defaultLocator.getLibraries();
+        }
         libs.add(libFile);
 
         return libs.iterator();

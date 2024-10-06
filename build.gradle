@@ -71,10 +71,38 @@ java {
 
 
 // 配置资源复制任务，确保资源文件被正确打包
-task copyNativeLibs(type: Copy) {
-    from zipTree(configurations.runtimeClasspath.find { it.name.contains('jnativehook') })
-    include '**/*.dll', '**/*.so', '**/*.dylib'
-    into "$buildDir/libs/native" // 指定目标目录
-}
-tasks.jlink.dependsOn copyNativeLibs
+// 这种做法，是在link之前，实际上，我们要在jlink之后执行
+//task copyNativeLibs(type: Copy) {
+//    from zipTree(configurations.runtimeClasspath.find { it.name.contains('jnativehook') })
+//    include '**/*.dll', '**/*.so', '**/*.dylib'
+//    into "$buildDir/libs/native" // 指定目标目录
+//}
 
+
+configurations {
+    resolvableImplementation { extendsFrom implementation }
+}
+
+tasks.jlink.doLast {
+    configurations.runtimeClasspath.files.findAll { f ->
+        f.name.contains "jnativehook"
+    }.each { nativeJar ->
+        def destDir = file("$imageDir/bin/native-libs")
+        delete destDir
+        mkdir destDir
+
+        def baseLibPath = 'com/github/kwhat/jnativehook/lib'
+        def zt = zipTree(nativeJar).matching {
+            include "$baseLibPath/**"
+        }
+        def expandedPath = zt.asFileTree.tree.mirror.dir.path
+        zt.files.each { f ->
+            def pathInLib = (f.path - expandedPath).substring(1)
+            pathInLib = pathInLib.replace('\\', '/')
+            pathInLib -= "$baseLibPath/"
+            def destFilePath = destDir.toPath().resolve(pathInLib)
+            mkdir destFilePath.parent
+            java.nio.file.Files.copy(f.toPath(), destFilePath)
+        }
+    }
+}
