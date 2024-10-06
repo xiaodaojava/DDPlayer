@@ -1,5 +1,6 @@
 package com.example.ttplayer;
 
+import com.example.ttplayer.tools.ToolsLogger;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
@@ -38,42 +39,48 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/com/example/ttplayer/hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(),600,400);
-        stage.setScene(scene);
-        stage.setTitle("DDTool-支持多个视频同时播放，支持截图，支持粘贴板备忘");
-        stage.show();
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/com/example/ttplayer/hello-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(),600,400);
+            stage.setScene(scene);
+            stage.setTitle("DDTool-支持多个视频同时播放，支持截图，支持粘贴板备忘");
+            stage.show();
 
-        // 注册全局键盘事件，这里要注意，注册之后，就不支持通过stage来关程序了
-        registerGlobalHotkey();
+            // 注册全局键盘事件，这里要注意，注册之后，就不支持通过stage来关程序了
+            registerGlobalHotkey();
 
-        // 创建一个定时器，每隔1秒检查一次剪贴板内容
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
-            Clipboard clipboard = Clipboard.getSystemClipboard();
-            if (clipboard.hasString()) {
-                String currentContent = clipboard.getString();
+            // 创建一个定时器，每隔1秒检查一次剪贴板内容
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+                Clipboard clipboard = Clipboard.getSystemClipboard();
+                if (clipboard.hasString()) {
+                    String currentContent = clipboard.getString();
 
-                // 取list中最后一个元素
-                String lastClipboardContent = clipboardHistory.isEmpty() ? "" : clipboardHistory.get(clipboardHistory.size() - 1);
-                // 如果剪贴板内容变化，则记录下来
-                if (!currentContent.equals(lastClipboardContent)) {
-                    clipboardHistory.add(currentContent);
+                    // 取list中最后一个元素
+                    String lastClipboardContent = clipboardHistory.isEmpty() ? "" : clipboardHistory.get(clipboardHistory.size() - 1);
+                    // 如果剪贴板内容变化，则记录下来
+                    if (!currentContent.equals(lastClipboardContent)) {
+                        clipboardHistory.add(currentContent);
+                    }
+                    // 如果list中超过了10个元素，则删除第一个元素
+                    if (clipboardHistory.size() > 10) {
+                        clipboardHistory.remove(0);
+                    }
                 }
-                // 如果list中超过了10个元素，则删除第一个元素
-                if (clipboardHistory.size() > 10) {
-                    clipboardHistory.remove(0);
-                }
-            }
-        }));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+            }));
+            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.play();
 
 
-        // 系统托盘相关的
-        stage.setOnCloseRequest(e -> {
-            SunflowerTray.getInstance().hide(stage);
-            SunflowerTray.getInstance().listen(stage);
-        });
+            // 系统托盘相关的
+            stage.setOnCloseRequest(e -> {
+                SunflowerTray.getInstance().hide(stage);
+                SunflowerTray.getInstance().listen(stage);
+            });
+        } catch (Throwable e) {
+            ToolsLogger.error("应用启动异常",e);
+        }
+
+
 
     }
 
@@ -176,6 +183,8 @@ public class HelloApplication extends Application {
 
 
     public static void main(String[] args) {
+        // 手动加载本地库
+//        System.loadLibrary("jnativehook"); // 对应的库名，不需要文件后缀
         launch();
     }
 

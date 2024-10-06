@@ -1,9 +1,9 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.javamodularity.moduleplugin' version '1.8.12'
-    id 'org.openjfx.javafxplugin' version '0.0.13'
-    id 'org.beryx.jlink' version '2.25.0'
+    id 'org.javamodularity.moduleplugin' version '1.8.15'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'org.beryx.jlink' version '3.0.1'
 }
 
 group 'red.lixiang'
@@ -28,6 +28,8 @@ tasks.withType(JavaCompile) {
 application {
     mainModule = 'com.example.ttplayer'
     mainClass = 'com.example.ttplayer.HelloApplication'
+    applicationDefaultJvmArgs = ['-Djnativehook.lib.locator=com.example.ttplayer.JLibLocator']
+
 }
 
 javafx {
@@ -42,6 +44,7 @@ dependencies {
     implementation "org.openjfx:javafx-graphics:22"
     implementation "org.openjfx:javafx-base:22"
     implementation 'com.github.kwhat:jnativehook:2.2.2'
+
 }
 
 test {
@@ -65,3 +68,13 @@ java {
         languageVersion = JavaLanguageVersion.of(22)
     }
 }
+
+
+// 配置资源复制任务，确保资源文件被正确打包
+task copyNativeLibs(type: Copy) {
+    from zipTree(configurations.runtimeClasspath.find { it.name.contains('jnativehook') })
+    include '**/*.dll', '**/*.so', '**/*.dylib'
+    into "$buildDir/libs/native" // 指定目标目录
+}
+tasks.jlink.dependsOn copyNativeLibs
+
