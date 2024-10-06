@@ -5,6 +5,7 @@ module com.example.ttplayer {
     requires javafx.media;
     requires javafx.graphics;
     requires javafx.swing;
+    requires com.github.kwhat.jnativehook;
 
 
     opens com.example.ttplayer to javafx.fxml;

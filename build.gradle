@@ -41,6 +41,7 @@ dependencies {
     implementation 'org.openjfx:javafx-media:22'
     implementation "org.openjfx:javafx-graphics:22"
     implementation "org.openjfx:javafx-base:22"
+    implementation 'com.github.kwhat:jnativehook:2.2.2'
 }
 
 test {
