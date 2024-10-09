@@ -6,7 +6,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ttplayer.HelloController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="red.lixiang.dd.HelloController">
     <children>
 
         <Label layoutX="53.0" layoutY="14.0" prefHeight="57.0" prefWidth="492.0" text="说明：本工具都是一些常用的工具，日常兴趣开发，如对您有帮助，在力所能及范围内，还望施舍一二，感激不尽！如有问题，可联系： 396975802@qq.com" wrapText="true" />

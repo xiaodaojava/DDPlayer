@@ -26,9 +26,9 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainModule = 'com.example.ttplayer'
-    mainClass = 'com.example.ttplayer.HelloApplication'
-    applicationDefaultJvmArgs = ['-Djnativehook.lib.locator=com.example.ttplayer.JLibLocator']
+    mainModule = 'red.lixiang.dd'
+    mainClass = 'red.lixiang.dd.HelloApplication'
+    applicationDefaultJvmArgs = ['-Djnativehook.lib.locator=red.lixiang.dd.JLibLocator']
 
 }
 
@@ -55,7 +55,7 @@ jlink {
     imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher {
-        name = 'DDPlayer'
+        name = 'DDTool'
     }
 }
 

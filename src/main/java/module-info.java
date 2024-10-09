@@ -1,4 +1,4 @@
-module com.example.ttplayer {
+module red.lixiang.dd {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.desktop;
@@ -8,6 +8,6 @@ module com.example.ttplayer {
     requires com.github.kwhat.jnativehook;
 
 
-    opens com.example.ttplayer to javafx.fxml;
-    exports com.example.ttplayer;
+    opens red.lixiang.dd to javafx.fxml;
+    exports red.lixiang.dd;
 }

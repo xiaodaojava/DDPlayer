@@ -1,4 +1,4 @@
-package com.example.ttplayer;
+package red.lixiang.dd;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -60,7 +60,7 @@ public class HelloController {
                 videoStage.setMinWidth(600);
                 videoStage.setMinHeight(500);
                 FXMLLoader fxmlLoader = new FXMLLoader();
-                fxmlLoader.setLocation(getClass().getResource("/com/example/ttplayer/video-player.fxml"));
+                fxmlLoader.setLocation(getClass().getResource("/red/lixiang/dd/video-player.fxml"));
                 Parent root = null;
                 try {
                     root = fxmlLoader.load();

@@ -10,7 +10,7 @@
 
 <AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
 
-            fx:controller="com.example.ttplayer.VideoPlayerController">
+            fx:controller="red.lixiang.dd.VideoPlayerController">
    <children>
       <VBox layoutY="40.0" prefHeight="320.0" prefWidth="600.0" fx:id="vbox">
 

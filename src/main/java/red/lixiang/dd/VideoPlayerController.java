@@ -1,4 +1,4 @@
-package com.example.ttplayer;
+package red.lixiang.dd;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;

@@ -1,6 +1,6 @@
-package com.example.ttplayer;
+package red.lixiang.dd;
 
-import com.example.ttplayer.tools.ToolsLogger;
+import red.lixiang.dd.tools.ToolsLogger;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
@@ -40,7 +40,7 @@ public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/com/example/ttplayer/hello-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/red/lixiang/dd/hello-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load(),600,400);
             stage.setScene(scene);
             stage.setTitle("DDTool-支持多个视频同时播放，支持截图，支持粘贴板备忘");

@@ -1,4 +1,4 @@
-package com.example.ttplayer.tools;
+package red.lixiang.dd.tools;
 
 /**
  * @author lixiang

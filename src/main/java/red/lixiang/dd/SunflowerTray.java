@@ -1,4 +1,4 @@
-package com.example.ttplayer;
+package red.lixiang.dd;
 
 
 import com.github.kwhat.jnativehook.GlobalScreen;
@@ -6,12 +6,10 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 
 import java.awt.*;
-import java.awt.datatransfer.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.IOException;
 import java.net.URL;
 
 /**
@@ -39,7 +37,7 @@ public class SunflowerTray {
         exitItem = new MenuItem("exit");
         //菜单项(退出)
         //此处不能选择ico格式的图片,要使用16*16的png格式的图片
-        URL url = SunflowerTray.class.getResource("/com/example/ttplayer/image/trayIcon.png");
+        URL url = SunflowerTray.class.getResource("/red/lixiang/dd/image/trayIcon.png");
         Image image = Toolkit.getDefaultToolkit().getImage(url);
         //系统托盘图标
         trayIcon = new TrayIcon(image);

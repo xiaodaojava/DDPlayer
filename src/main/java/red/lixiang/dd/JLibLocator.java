@@ -1,7 +1,7 @@
-package com.example.ttplayer;
+package red.lixiang.dd;
 
 
-import com.example.ttplayer.tools.ToolsLogger;
+import red.lixiang.dd.tools.ToolsLogger;
 import com.github.kwhat.jnativehook.DefaultLibraryLocator;
 import com.github.kwhat.jnativehook.NativeLibraryLocator;
 import com.github.kwhat.jnativehook.NativeSystem;
