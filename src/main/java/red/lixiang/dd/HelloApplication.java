@@ -140,7 +140,10 @@ public class HelloApplication extends Application {
         ListView<String> listView = new ListView<>();
         // clipboardHistory 倒序循环添加到listView中
         for (int i = clipboardHistory.size() - 1; i >= 0; i--) {
-            listView.getItems().add(clipboardHistory.get(i));
+            String s = clipboardHistory.get(i);
+            // 对s 只保留前30位
+            s = s.substring(0, Math.min(s.length(), 30));
+            listView.getItems().add(s);
         }
 
         // 添加双击事件
